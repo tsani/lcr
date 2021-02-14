@@ -1,52 +1,37 @@
-import React, {useEffect, useRef, useState} from 'react';
-import './App.css';
-import 'semantic-ui-css/semantic.min.css';
-import {Container, Header, Icon, Input} from "semantic-ui-react";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import "./App.css";
+import "semantic-ui-css/semantic.min.css";
+import { Container, Header, Icon, Input } from "semantic-ui-react";
+import LcrHeader from "./components/lcr-header";
+import { LCR_URL } from "./constants";
+import Audio from "./components/audio";
+import usePersistentState from "./hooks/use-persistent-state";
 
-interface AudioProps {
-    volume: number;
-}
-
-const Audio = ({volume}: AudioProps) => {
-    const audioRef = useRef<HTMLAudioElement>(null);
-
-    if (null !== audioRef.current && audioRef.current.volume !== volume) {
-        audioRef.current.volume = volume;
-    }
-
-    return (
-        <audio ref={audioRef} autoPlay>
-            <source src="http://radio.labcoders.club/audio"/>
-        </audio>
-    );
-}
+const Reset = () => {};
 
 function App() {
-    const [volume, setVolume] = useState(0.0);
+  const [volume, setVolume] = usePersistentState("volume", 0.0, {
+    toString: (x) => x.toString(),
+    fromString: (x) => parseFloat(x),
+  });
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-    useEffect(() => {
-        const v = parseFloat(localStorage.getItem('volume') ?? '0');
-        setVolume(v);
-    }, []);
-
-    const doSetVolume = (v: number) => {
-        localStorage.setItem('volume', v.toString());
-        setVolume(v);
-    };
-
-    return (
-        <Container textAlign="center">
-            <Header as="h1" icon>
-                <Icon name="music"/>
-                Labcoders Radio
-            </Header>
-
-            <div>
-                <Input label="Volume" min="0" max="100" value={volume} onChange={(e) => doSetVolume(parseInt(e.target.value))} type="range"/>
-                <Audio volume={volume/100}/>
-            </div>
-        </Container>
-    );
+  return (
+    <Container textAlign="center">
+      <LcrHeader />
+      <div>
+        <Input
+          label="Volume"
+          min="0"
+          max="100"
+          value={volume}
+          onChange={(e) => setVolume(parseInt(e.target.value))}
+          type="range"
+        />
+        <Audio url={LCR_URL} audioRef={audioRef} volume={volume / 100} />
+      </div>
+    </Container>
+  );
 }
 
 export default App;
