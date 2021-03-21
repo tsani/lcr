@@ -31,4 +31,11 @@ const usePersistentState = <T>(
   };
   return [value, doSetValue];
 };
+
+export const usePersistentNumber = (key: string, initialValue: number) =>
+  usePersistentState(key, initialValue, {
+    toString: (x) => x.toString(),
+    fromString: (x) => parseFloat(x),
+  });
+
 export default usePersistentState;

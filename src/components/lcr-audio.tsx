@@ -7,7 +7,7 @@ export interface AudioProps {
   url: string;
 }
 
-const Audio = ({ url, volume, audioRef }: AudioProps) => {
+const LcrAudio = ({ url, volume, audioRef }: AudioProps) => {
   useAudioVolume(volume, audioRef);
 
   return (
@@ -16,4 +16,4 @@ const Audio = ({ url, volume, audioRef }: AudioProps) => {
     </audio>
   );
 };
-export default Audio;
+export default LcrAudio;
